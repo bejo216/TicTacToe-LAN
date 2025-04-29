@@ -1,30 +1,30 @@
 package com.example.appliakcija3.Sockets;
 import android.util.Log;
-import android.widget.TextView;
 
-import com.example.appliakcija3.R;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import android.view.View;
-import android.widget.TextView;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ClientSocket {
 
-    public void startClient(String ipAddress) {
+    public boolean startClient(String ipAddress) throws InterruptedException {
+        AtomicBoolean ABConnected = new AtomicBoolean(false);
         new Thread(() -> {
             try {
                 Socket socket = new Socket(ipAddress, 1234); // server IP and port
                 socket.getOutputStream().write("Hello from client11".getBytes());
-
-
+                //Log.d("SocketConnection", "yes");
+                ABConnected.set(true);
+                Log.d("SocketConnection", "-"+ABConnected);
                 socket.close();
             } catch (IOException e) {
+                Log.d("SocketConnection", "nope");
 
             }
         }).start();
+            Thread.sleep(1000);
+
+        Log.d("SocketConnection", "--"+ABConnected);
+        return ABConnected.get() ;
     }
 }
