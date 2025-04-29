@@ -25,7 +25,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         int id = v.getId();
 
-        if (id == R.id.Main_HostServer_Button) {
+        if (id == R.id.Main_PlayComputer_Button) {
+            Log.d("SocketConnection", "0");
+            Intent intent = new Intent(MainActivity.this, GameActivity.class);
+            startActivity(intent);
+
+        } else if (id == R.id.Main_HostServer_Button) {
             Log.d("SocketConnection", "1");
             Intent intent = new Intent(MainActivity.this, HostServerActivity.class);
             startActivity(intent);
@@ -36,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(intent);
 
         }
+
     }
 
     @Override
@@ -47,13 +53,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
+
         //BUTTONS
+        Button Main_PlayComputer_Button = findViewById(R.id.Main_PlayComputer_Button);
         Button Main_HostServer_Button = findViewById(R.id.Main_HostServer_Button);
         Button Main_ConnectServer_Button = findViewById(R.id.Main_ConnectServer_Button);
 
 
 
         //LISTENERS
+        Main_PlayComputer_Button.setOnClickListener(this);
         Main_HostServer_Button.setOnClickListener(this);
         Main_ConnectServer_Button.setOnClickListener(this);
 
