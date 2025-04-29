@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Appliakcija3</string>
+    <string name="title_activity_host_server">HostServerActivity</string>
 </resources>
