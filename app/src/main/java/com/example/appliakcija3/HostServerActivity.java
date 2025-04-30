@@ -2,6 +2,7 @@ package com.example.appliakcija3;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ import java.net.UnknownHostException;
 import java.util.Enumeration;
 
 public class HostServerActivity extends AppCompatActivity {
+
 
     public String getLocalIpAddress() {
         try {

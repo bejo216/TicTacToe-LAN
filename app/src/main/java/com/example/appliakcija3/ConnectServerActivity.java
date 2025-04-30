@@ -16,8 +16,12 @@ import com.example.appliakcija3.Sockets.ClientSocket;
 import com.example.appliakcija3.Sockets.ValidationSockets;
 
 import java.io.IOException;
+import java.net.Socket;
 
 public class ConnectServerActivity extends AppCompatActivity implements View.OnClickListener {
+
+    public ConnectServerActivity() throws IOException {
+    }
 
     @Override
     public void onClick(View v) {
@@ -39,6 +43,7 @@ public class ConnectServerActivity extends AppCompatActivity implements View.OnC
         }
     }
 
+    ClientSocket clientSocket = new ClientSocket();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +62,8 @@ public class ConnectServerActivity extends AppCompatActivity implements View.OnC
         ConnectServer_Menu_Button.setOnClickListener(this);
         ConnectServer_Menu_Button.setOnClickListener(v -> finish());
     }
+
+
     public void onClickButton() throws IOException {
 
 
@@ -72,7 +79,7 @@ public class ConnectServerActivity extends AppCompatActivity implements View.OnC
             if (ValidationSockets.IsIPAddressFormat(Input)){
 
 
-                ClientSocket clientSocket = new ClientSocket();
+
                 boolean flag = clientSocket.startClient(Input);
                 Log.i("SocketConnection", "-"+flag);
                 if (flag){

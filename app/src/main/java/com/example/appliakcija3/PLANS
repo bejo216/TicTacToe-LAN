@@ -15,3 +15,5 @@ Layer List Drawables: Combine multiple drawables into one.
 
 FILE
 kad trazimo id idemo po findViewByID(int)-NAJLAGANIJE
+
+kad saljemo pdoatke treba closujemo out/sa kojim objektom printujemo
