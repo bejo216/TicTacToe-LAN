@@ -5,17 +5,13 @@ kad s eklikne host izadje toast text kao napravljen srever
 
 Drawable
 Ovo je gde se prave custom button background...
-
 Shape Drawables: Define custom shapes like rectangles, circles, etc.
-
 State List Drawables: Handle different states (pressed, focused, etc.) for UI elements.
-
 Image Resources: Store bitmap images (PNG, JPG, etc.).
-
 Nine Patch Images: Stretchable images, perfect for backgrounds or UI elements.
-
 Vector Drawables: Scalable vector images, great for icons and simple graphics.
-
 Animation Drawables: Frame-by-frame image animations.
-
 Layer List Drawables: Combine multiple drawables into one.
+
+FILE
+kad trazimo id idemo po findViewByID(int)-NAJLAGANIJE
