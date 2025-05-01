@@ -6,10 +6,10 @@ import com.example.appliakcija3.GameActivity;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ClientSocket {
     public static Socket clientSocket;
@@ -39,24 +39,6 @@ public class ClientSocket {
         return ABConnected.get() ;
     }
 
-    public void SendMove(String gameMove) throws InterruptedException {
-        new Thread(() -> {
-            try {
-
-                clientSocket.getOutputStream().write(gameMove.getBytes());
-
-                Log.d("SocketConnection", "SENT PACKAGE");
-
-
-            } catch (IOException e) {
-                Log.d("SocketConnection", "nope PACKAGE");
-
-            }
-        }).start();
-
-
-    }
-
     public static void SendString(String message) {
         new Thread(() -> {
 
@@ -80,8 +62,8 @@ public class ClientSocket {
     private static BufferedReader reader;
     private static boolean isRunning = true;
     public static void WaitMove(){
-        new Thread(() -> {
 
+        new Thread(() -> {
             try {
                 reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 while (reader == null) {
@@ -91,18 +73,16 @@ public class ClientSocket {
 
 
 
-                while (isRunning) {
+
                     String message = reader.readLine();
                     Log.d("Debug1111", "s "+message);
                     GameActivity.YourTurn=true;
-                    break;
+                    GameActivity.opponentMove=message;
 
-                }
+
             } catch (InterruptedException e) {
-                Log.d("Debug1111", "s 1");
                 throw new RuntimeException(e);
             } catch (IOException e) {
-                Log.d("Debug1111", "s 2");
                 throw new RuntimeException(e);
             }
 
@@ -111,4 +91,5 @@ public class ClientSocket {
 
 
     }
+
 }

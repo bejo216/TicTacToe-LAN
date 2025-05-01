@@ -14,8 +14,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.appliakcija3.Sockets.ClientSocket;
+
+import java.io.IOException;
+import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
@@ -30,21 +35,40 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if (id == R.id.Game_A1_Button) {
             ButtonLogic(id,"A1");
 
-
-
         } else if (id == R.id.Game_A2_Button) {
             ButtonLogic(id,"A2");
-
 
         } else if (id == R.id.Game_A3_Button) {
             ButtonLogic(id,"A3");
 
+        } else if (id == R.id.Game_B1_Button) {
+            ButtonLogic(id,"B1");
+
+        } else if (id == R.id.Game_B2_Button) {
+            ButtonLogic(id,"B2");
+
+        } else if (id == R.id.Game_B3_Button) {
+            ButtonLogic(id,"B3");
+
+        } else if (id == R.id.Game_C1_Button) {
+            ButtonLogic(id,"C1");
+
+        } else if (id == R.id.Game_C2_Button) {
+            ButtonLogic(id,"C2");
+
+        } else if (id == R.id.Game_C3_Button) {
+            ButtonLogic(id,"C3");
 
         }
 
-    }
 
-    Set<String> set = new HashSet<>();
+    }
+    Set<String> MetaDataSet = new HashSet<>();
+
+    //a collection of moves that are available
+    Set<String> set;
+    //Users set -for logic when determining winning condition
+    Set<String> Playerset = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,15 +76,17 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_game);
 
-        set.add("A1");
-        set.add("A2");
-        set.add("A3");
-        set.add("B1");
-        set.add("B2");
-        set.add("B3");
-        set.add("C1");
-        set.add("C2");
-        set.add("C3");
+
+        MetaDataSet.add("A1");
+        MetaDataSet.add("A2");
+        MetaDataSet.add("A3");
+        MetaDataSet.add("B1");
+        MetaDataSet.add("B2");
+        MetaDataSet.add("B3");
+        MetaDataSet.add("C1");
+        MetaDataSet.add("C2");
+        MetaDataSet.add("C3");
+        set = new HashSet<>(MetaDataSet);
 
         //BUTTONS
         Button Game_A1_Button =findViewById(R.id.Game_A1_Button);
@@ -87,28 +113,68 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         Game_C1_Button.setOnClickListener(this);
         Game_C2_Button.setOnClickListener(this);
         Game_C3_Button.setOnClickListener(this);
-
+        try {
+            ClientSocket.startClient("192.168.0.19");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         ThreadCheckerForTurnUI();
-        ThreadChangeTurn();
+        //ThreadChangeTurn();
+
+
     }
 
     boolean running=true;
-    boolean YourTurn=true;
-
-    public void GameRoundTrue(int selectedButtonID) throws InterruptedException {
+    public static String opponentMove;
+    public static boolean YourTurn=true;
+    //Happens when a move by the player is legal
+    public void GameRoundTrue(int selectedButtonID,String setElement) throws InterruptedException, IOException {
+        YourTurn=false;
         Button SelectedButton = findViewById(selectedButtonID);
         SelectedButton.setText("Pressed");
-        YourTurn=false;
+
+        //FUNKCIJA KOJA GLEDA JEL JE IGRAC POBEDIO
+        Playerset.add(setElement);
+        if(WinningConditionChecker(Playerset)){
+        ClientSocket.SendString("I WON");
+
+        }
         TextView textView1= findViewById(R.id.Game_Turn_TextView);
         textView1.setText("Opponents Turn");
         textView1.setTextColor(Color.RED);
 
 
 
+        //ceka red
+        ClientSocket.SendString(setElement);
 
 
-        //textView1.setText("Your Turn");
-        //textView1.setTextColor(Color.GREEN);
+        ClientSocket.WaitMove();
+
+
+
+
+    }
+
+    //Logic that checks if the oplayer has won the game
+    public boolean WinningConditionChecker(Set PlayerPlayedMoves){
+
+        //HORIZONTAL
+        if (PlayerPlayedMoves.contains("A1") && PlayerPlayedMoves.contains("A2") && PlayerPlayedMoves.contains("A3")) return true;
+        else if (PlayerPlayedMoves.contains("B1") && PlayerPlayedMoves.contains("B2") && PlayerPlayedMoves.contains("B3")) return true;
+        else if (PlayerPlayedMoves.contains("C1") && PlayerPlayedMoves.contains("C2") && PlayerPlayedMoves.contains("C3")) return true;
+
+        //VERTICAL
+        else if (PlayerPlayedMoves.contains("A1") && PlayerPlayedMoves.contains("B1") && PlayerPlayedMoves.contains("C1")) return true;
+        else if (PlayerPlayedMoves.contains("A2") && PlayerPlayedMoves.contains("B2") && PlayerPlayedMoves.contains("C2")) return true;
+        else if (PlayerPlayedMoves.contains("A3") && PlayerPlayedMoves.contains("B3") && PlayerPlayedMoves.contains("C3")) return true;
+
+        //DIAGONAL
+        else if (PlayerPlayedMoves.contains("A1") && PlayerPlayedMoves.contains("B2") && PlayerPlayedMoves.contains("C3")) return true;
+        else if (PlayerPlayedMoves.contains("C1") && PlayerPlayedMoves.contains("B2") && PlayerPlayedMoves.contains("A3")) return true;
+
+        return false;
+
 
     }
 
@@ -126,10 +192,55 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         return false;
     }
 
+    public Button opponentButtonUI(String setElement){
+
+        if (setElement.equals("A1")&& set.contains("A1")) {
+            return getButtonView(R.id.Game_A1_Button);
+
+
+        }
+        else if (setElement == "A2"&& set.contains("A2")) {
+            set.remove("A2");
+            return getButtonView(R.id.Game_A2_Button);
+
+
+        } else if (setElement == "A3"&& set.contains("A3")) {
+            getButtonView(R.id.Game_A3_Button).setText("Opponent");
+            set.remove("A3");
+
+        } else if (setElement == "B1"&& set.contains("B1")) {
+            getButtonView(R.id.Game_B1_Button).setText("Opponent");
+            set.remove("B1");
+
+        } else if (setElement == "B2"&& set.contains("B2")) {
+            getButtonView(R.id.Game_B2_Button).setText("Opponent");
+            set.remove("B2");
+
+        } else if (setElement == "B3"&& set.contains("B3")) {
+            getButtonView(R.id.Game_B3_Button).setText("Opponent");
+            set.remove("B3");
+
+        } else if (setElement == "C1"&& set.contains("C1")) {
+            getButtonView(R.id.Game_C1_Button).setText("Opponent");
+            set.remove("C1");
+
+        } else if (setElement == "C2"&& set.contains("C2")) {
+            getButtonView(R.id.Game_C2_Button).setText("Opponent");
+            set.remove("C2");
+
+        } else if (setElement == "C3"&& set.contains("C3")) {
+            getButtonView(R.id.Game_C3_Button).setText("Opponent");
+            set.remove("C3");
+
+        }
+        return null;
+    }
+
 
 
 
     public void ThreadCheckerForTurnUI(){
+
         TextView textView1= findViewById(R.id.Game_Turn_TextView);
         new Thread(() -> {
             while (running) {
@@ -146,6 +257,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
                 Log.d("ThreadDebug1", "Updating UI2");
+                //updateOpponentMoveUI(opponentMove);
                 runOnUiThread(() -> {
 
                     textView1.setText("Your Turn2");
@@ -157,13 +269,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }).start();
     }
 
+
     public void ThreadChangeTurn(){
         new Thread(() -> {
             while (running) {
                 while (!YourTurn) {
                     try {
                         Log.d("ThreadDebug1", "false");
-                        Thread.sleep(10000);
+                        Thread.sleep(1000);
                         YourTurn=true;
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
@@ -181,12 +294,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     public void ButtonLogic(int id,String setElement){
         Log.d("GameActivity1", "A1");
+
         if(IsItPossibleBoolean(setElement)){
             Log.d("GameActivity1", "PROSLO A1");
 
             try {
-                GameRoundTrue(id);
-            } catch (InterruptedException e) {
+                GameRoundTrue(id,setElement);
+            } catch (InterruptedException | IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -194,6 +308,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
 
     }
+
+
+    public Button getButtonView(int id){
+        Button button= findViewById(id);
+        return button;
+    }
+
 
 
 
