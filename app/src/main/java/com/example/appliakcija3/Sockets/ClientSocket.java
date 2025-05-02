@@ -1,4 +1,5 @@
 package com.example.appliakcija3.Sockets;
+import android.graphics.Color;
 import android.util.Log;
 
 import com.example.appliakcija3.GameActivity;
@@ -78,6 +79,8 @@ public class ClientSocket {
                     Log.d("Debug1111", "s "+message);
                     GameActivity.YourTurn=true;
                     GameActivity.opponentMove=message;
+
+
 
 
             } catch (InterruptedException e) {

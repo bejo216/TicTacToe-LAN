@@ -125,7 +125,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     boolean running=true;
-    public static String opponentMove;
+    public static String opponentMove="";
     public static boolean YourTurn=true;
     //Happens when a move by the player is legal
     public void GameRoundTrue(int selectedButtonID,String setElement) throws InterruptedException, IOException {
@@ -195,42 +195,43 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     public Button opponentButtonUI(String setElement){
 
         if (setElement.equals("A1")&& set.contains("A1")) {
+            set.remove("A1");
             return getButtonView(R.id.Game_A1_Button);
 
-
         }
-        else if (setElement == "A2"&& set.contains("A2")) {
+        else if (setElement.equals("A2") && set.contains("A2")) {
             set.remove("A2");
             return getButtonView(R.id.Game_A2_Button);
 
 
-        } else if (setElement == "A3"&& set.contains("A3")) {
-            getButtonView(R.id.Game_A3_Button).setText("Opponent");
+        } else if (setElement.equals("A3") && set.contains("A3")) {
             set.remove("A3");
+            return getButtonView(R.id.Game_A3_Button);
 
-        } else if (setElement == "B1"&& set.contains("B1")) {
-            getButtonView(R.id.Game_B1_Button).setText("Opponent");
+        } else if (setElement.equals("B1") && set.contains("B1")) {
             set.remove("B1");
+            return getButtonView(R.id.Game_B1_Button);
 
-        } else if (setElement == "B2"&& set.contains("B2")) {
-            getButtonView(R.id.Game_B2_Button).setText("Opponent");
+        } else if (setElement.equals("B2") && set.contains("B2")) {
             set.remove("B2");
+            Log.d("ThreadDebug2", "jel poslao b2 mentalc");
+            return getButtonView(R.id.Game_B2_Button);
 
-        } else if (setElement == "B3"&& set.contains("B3")) {
-            getButtonView(R.id.Game_B3_Button).setText("Opponent");
+        } else if (setElement.equals("B3") && set.contains("B3")) {
             set.remove("B3");
+            return getButtonView(R.id.Game_B3_Button);
 
-        } else if (setElement == "C1"&& set.contains("C1")) {
-            getButtonView(R.id.Game_C1_Button).setText("Opponent");
+        } else if (setElement.equals("C1") && set.contains("C1")) {
             set.remove("C1");
+            return getButtonView(R.id.Game_C1_Button);
 
-        } else if (setElement == "C2"&& set.contains("C2")) {
-            getButtonView(R.id.Game_C2_Button).setText("Opponent");
+        } else if (setElement.equals("C2") && set.contains("C2")) {
             set.remove("C2");
+            return getButtonView(R.id.Game_C2_Button);
 
-        } else if (setElement == "C3"&& set.contains("C3")) {
-            getButtonView(R.id.Game_C3_Button).setText("Opponent");
+        } else if (setElement.equals("C3") && set.contains("C3")) {
             set.remove("C3");
+            return getButtonView(R.id.Game_C3_Button);
 
         }
         return null;
@@ -244,21 +245,40 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         TextView textView1= findViewById(R.id.Game_Turn_TextView);
         new Thread(() -> {
             while (running) {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 while (!YourTurn) {
                     try {
-                        Thread.sleep(100);
-                        Log.d("ThreadDebug1", "Updating UI1");
-                        runOnUiThread(() -> {
-                            textView1.setText("Opponents Turn");
-                            textView1.setTextColor(Color.RED);
-                        });
+                        Thread.sleep(50);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
+                    Log.d("ThreadDebug1", "Updating UI1");
+                    runOnUiThread(() -> {
+                        textView1.setText("Opponents Turn");
+                        textView1.setTextColor(Color.RED);
+                    });
                 }
-                Log.d("ThreadDebug1", "Updating UI2");
-                //updateOpponentMoveUI(opponentMove);
+
+                if(!opponentMove.equals("")){
+                    Log.d("ThreadDebug2", opponentMove);
+                    Button button = opponentButtonUI(opponentMove);
+
+                    runOnUiThread(() -> {
+                            if (button==null){
+
+                            }
+                            button.setText("Opponent");
+
+                    });
+                    opponentMove="";
+                }
+
                 runOnUiThread(() -> {
+
 
                     textView1.setText("Your Turn2");
                     textView1.setTextColor(Color.GREEN);
