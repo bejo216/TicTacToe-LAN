@@ -1,6 +1,5 @@
 package com.example.appliakcija3;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,17 +9,11 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.example.appliakcija3.Sockets.ClientSocket;
+import com.example.appliakcija3.SocketsPackage.ClientSocket;
 
 import java.io.IOException;
-import java.net.Socket;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
@@ -63,19 +56,26 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
 
     }
-    Set<String> MetaDataSet = new HashSet<>();
+
 
     //a collection of moves that are available
-    Set<String> set;
+
     //Users set -for logic when determining winning condition
-    Set<String> Playerset = new HashSet<>();
+    Set<String> Playerset;
+    Set<String> set;
+    public static boolean running;
+    public static String opponentMove;
+    public static boolean YourTurn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_game);
-
+        running=true;
+        YourTurn=true;
+        opponentMove="";
+        Set<String> MetaDataSet = new HashSet<>();
 
         MetaDataSet.add("A1");
         MetaDataSet.add("A2");
@@ -87,7 +87,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         MetaDataSet.add("C2");
         MetaDataSet.add("C3");
         set = new HashSet<>(MetaDataSet);
-
+        Playerset = new HashSet<>();
         //BUTTONS
         Button Game_A1_Button =findViewById(R.id.Game_A1_Button);
         Button Game_A2_Button =findViewById(R.id.Game_A2_Button);
@@ -119,14 +119,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             throw new RuntimeException(e);
         }
         ThreadCheckerForTurnUI();
-        //ThreadChangeTurn();
+
 
 
     }
 
-    boolean running=true;
-    public static String opponentMove="";
-    public static boolean YourTurn=true;
+
     //Happens when a move by the player is legal
     public void GameRoundTrue(int selectedButtonID,String setElement) throws InterruptedException, IOException {
         YourTurn=false;
@@ -136,7 +134,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         //FUNKCIJA KOJA GLEDA JEL JE IGRAC POBEDIO
         Playerset.add(setElement);
         if(WinningConditionChecker(Playerset)){
-        ClientSocket.SendString("I WON");
+        ClientSocket.SendString("W");
+        running=false;
+        return;
 
         }
         TextView textView1= findViewById(R.id.Game_Turn_TextView);
@@ -256,7 +256,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                    Log.d("ThreadDebug1", "Updating UI1");
+                    if (!running){
+                        runOnUiThread(this::finish);
+                        return;
+                    }
+
                     runOnUiThread(() -> {
                         textView1.setText("Opponents Turn");
                         textView1.setTextColor(Color.RED);
@@ -285,35 +289,21 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 });
 
             }
-
-        }).start();
-    }
-
-
-    public void ThreadChangeTurn(){
-        new Thread(() -> {
-            while (running) {
-                while (!YourTurn) {
-                    try {
-                        Log.d("ThreadDebug1", "false");
-                        Thread.sleep(1000);
-                        YourTurn=true;
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                Log.d("ThreadDebug1", "true");
-
-
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
+            runOnUiThread(this::finish);
+            return;
 
         }).start();
     }
-
-
 
     public void ButtonLogic(int id,String setElement){
         Log.d("GameActivity1", "A1");
+        if (running){
+
 
         if(IsItPossibleBoolean(setElement)){
             Log.d("GameActivity1", "PROSLO A1");
@@ -326,7 +316,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
 
 
-
+        }
     }
 
 

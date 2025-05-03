@@ -1,4 +1,4 @@
-package com.example.appliakcija3.Sockets;
+package com.example.appliakcija3.SocketsPackage;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

@@ -12,11 +12,10 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-import com.example.appliakcija3.Sockets.ClientSocket;
-import com.example.appliakcija3.Sockets.ValidationSockets;
+import com.example.appliakcija3.SocketsPackage.ClientSocket;
+import com.example.appliakcija3.SocketsPackage.ValidationSockets;
 
 import java.io.IOException;
-import java.net.Socket;
 
 public class ConnectServerActivity extends AppCompatActivity implements View.OnClickListener {
 

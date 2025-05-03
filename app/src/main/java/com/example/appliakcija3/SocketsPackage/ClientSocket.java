@@ -1,5 +1,4 @@
-package com.example.appliakcija3.Sockets;
-import android.graphics.Color;
+package com.example.appliakcija3.SocketsPackage;
 import android.util.Log;
 
 import com.example.appliakcija3.GameActivity;
@@ -10,7 +9,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ClientSocket {
     public static Socket clientSocket;
@@ -61,7 +59,7 @@ public class ClientSocket {
 
     }
     private static BufferedReader reader;
-    private static boolean isRunning = true;
+
     public static void WaitMove(){
 
         new Thread(() -> {
@@ -76,6 +74,12 @@ public class ClientSocket {
 
 
                     String message = reader.readLine();
+                    if (message.equals("W")){
+
+                        GameActivity.running=false;
+                        clientSocket.close();
+                        return;
+                    }
                     Log.d("Debug1111", "s "+message);
                     GameActivity.YourTurn=true;
                     GameActivity.opponentMove=message;

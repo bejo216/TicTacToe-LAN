@@ -4,18 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.activity.EdgeToEdge;
-import com.example.appliakcija3.R;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.appliakcija3.Sockets.ClientSocket;
-import com.example.appliakcija3.Sockets.ValidationSockets;
-
-import java.io.IOException;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
