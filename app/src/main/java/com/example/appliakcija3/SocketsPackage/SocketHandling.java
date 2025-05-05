@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ClientSocket {
+public class SocketHandling {
     public static Socket clientSocket;
 
 
@@ -75,21 +75,19 @@ public class ClientSocket {
 
                     String message = reader.readLine();
                     if (message.equals("W")){
-
-                        GameActivity.running=false;
-                        clientSocket.close();
+                        GameActivity.opponentMove=message;
                         return;
                     }
+
                     Log.d("Debug1111", "s "+message);
-                    GameActivity.YourTurn=true;
+                    GameActivity.yourTurn =true;
                     GameActivity.opponentMove=message;
+                    GameActivity.opponentSet.add(message);
 
 
 
 
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
+            } catch (InterruptedException | IOException e) {
                 throw new RuntimeException(e);
             }
 

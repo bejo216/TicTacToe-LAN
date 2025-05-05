@@ -12,7 +12,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-import com.example.appliakcija3.SocketsPackage.ClientSocket;
+import com.example.appliakcija3.SocketsPackage.SocketHandling;
 import com.example.appliakcija3.SocketsPackage.ValidationSockets;
 
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class ConnectServerActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    ClientSocket clientSocket = new ClientSocket();
+    SocketHandling socketHandling = new SocketHandling();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +79,7 @@ public class ConnectServerActivity extends AppCompatActivity implements View.OnC
 
 
 
-                boolean flag = clientSocket.startClient(Input);
+                boolean flag = socketHandling.startClient(Input);
                 Log.i("SocketConnection", "-"+flag);
                 if (flag){
                     setContentView(R.layout.activity_main);
