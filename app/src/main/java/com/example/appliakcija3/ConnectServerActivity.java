@@ -1,5 +1,6 @@
 package com.example.appliakcija3;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,22 +28,22 @@ public class ConnectServerActivity extends AppCompatActivity implements View.OnC
         int id = v.getId();
 
         if (id == R.id.ConnectServer_Join_Button) {
-            Log.d("SocketConnection", "2-1");
+
 
             try {
                 onClickButton();
 
             } catch (IOException e) {
-                Log.d("SocketConnection", "2-1-ERR");
+
 
             }
         } else if (id == R.id.ConnectServer_Menu_Button) {
-            Log.d("SocketConnection", "2");
+            finish();
 
         }
     }
 
-    SocketHandling socketHandling = new SocketHandling();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +60,7 @@ public class ConnectServerActivity extends AppCompatActivity implements View.OnC
         //LISTENERS
         ConnectServer_Join_Button.setOnClickListener(this);
         ConnectServer_Menu_Button.setOnClickListener(this);
-        ConnectServer_Menu_Button.setOnClickListener(v -> finish());
+        ConnectServer_Menu_Button.setOnClickListener(this);
     }
 
 
@@ -74,17 +75,16 @@ public class ConnectServerActivity extends AppCompatActivity implements View.OnC
         String Input = edittext1.getText().toString();
 
         try{
-
             if (ValidationSockets.IsIPAddressFormat(Input)){
+                boolean flag = SocketHandling.startClient(Input);
 
-
-
-                boolean flag = socketHandling.startClient(Input);
-                Log.i("SocketConnection", "-"+flag);
                 if (flag){
-                    setContentView(R.layout.activity_main);
-                    textview1.setText("Connected!");
-                    Toast.makeText(this, "Connected to", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(ConnectServerActivity.this, GameActivity.class);
+                    intent.putExtra("vsPlayer", true);
+                    intent.putExtra("yourTurn", true);
+                    startActivity(intent);
+                    Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     textview1.setText("Unable to connect to host at: " +  Input);
@@ -97,7 +97,7 @@ public class ConnectServerActivity extends AppCompatActivity implements View.OnC
 
 
 
-        } catch(Exception e) {
+        } catch(Exception ignored) {
 
         }
 

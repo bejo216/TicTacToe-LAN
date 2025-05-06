@@ -18,17 +18,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int id = v.getId();
 
         if (id == R.id.Main_PlayComputer_Button) {
-            Log.d("SocketConnection", "0");
             Intent intent = new Intent(MainActivity.this, GameActivity.class);
+            intent.putExtra("vsPlayer", false);
+            intent.putExtra("yourTurn", false);
             startActivity(intent);
 
         } else if (id == R.id.Main_HostServer_Button) {
-            Log.d("SocketConnection", "1");
             Intent intent = new Intent(MainActivity.this, HostServerActivity.class);
             startActivity(intent);
 
         } else if (id == R.id.Main_ConnectServer_Button) {
-            Log.d("SocketConnection", "2");
             Intent intent = new Intent(MainActivity.this, ConnectServerActivity.class);
             startActivity(intent);
 

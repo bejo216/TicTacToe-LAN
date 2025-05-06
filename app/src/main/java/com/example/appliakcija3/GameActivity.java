@@ -1,5 +1,6 @@
 package com.example.appliakcija3;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -78,10 +79,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_game);
+        Intent intent = getIntent();
+
         running=true;
-        yourTurn =true;
+        yourTurn =intent.getBooleanExtra("yourTurn", true);
         opponentMove="";
-        vsPlayer=false;
+        vsPlayer=intent.getBooleanExtra("vsPlayer", false);
         Set<String> MetaDataSet = new HashSet<>();
 
         MetaDataSet.add("A1");
@@ -121,15 +124,17 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         Game_C1_Button.setOnClickListener(this);
         Game_C2_Button.setOnClickListener(this);
         Game_C3_Button.setOnClickListener(this);
-        if(vsPlayer){
+
+        if(!vsPlayer && !yourTurn){
             try {
-                SocketHandling.startClient("192.168.0.19");
-            } catch (InterruptedException e) {
+                ComputerMove();
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }
 
-        if(!yourTurn || vsPlayer==true){
+
+        }
+        if(!yourTurn && vsPlayer){
             OpponentMoveUpdateThread();
         }
 
@@ -185,19 +190,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
             if (WinningConditionChecker(opponentSet)){
                 GameWon('L');
-                SocketHandling.clientSocket.close();
                 finish();
                 return;
+
             } else if (set.isEmpty()){
                 GameWon('D');
-                SocketHandling.clientSocket.close();
                 finish();
                 return;
+
             }
-            Button button = opponentButtonUI(opponentMove);
-            button.setText("Opponent");
-            opponentMove="";
-            yourTurn=true;
+
         }
         else {
             SocketHandling.SendString(setElement);
@@ -325,10 +327,26 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if(!list.isEmpty()){
             String str = list.get(rand.nextInt(list.size()));
             opponentSet.add(str);
-            Log.d("GameActivity1", str);
             opponentMove=str;
 
+            Button button = opponentButtonUI(opponentMove);
+            button.setText("Opponent");
+            opponentMove="";
+            yourTurn=true;
+            if(list.isEmpty()){
+                GameWon('D');
+                running=false;
+                finish();
+                return;
+            }
+        } else {
+                GameWon('D');
+                running=false;
+                finish();
+                return;
+
         }
+
 
     }
 
@@ -441,26 +459,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         Random rand = new Random();
         List<String> stringList= new ArrayList<>();
 
-        stringList.add("By mine own hand and cunning, I hath prevailed!");
-        stringList.add("Lo! My foes did tremble and flee before mine armies.");
-        stringList.add("I hath constructed a Wonder so wondrous, they could not contest it.");
-        stringList.add("The villagers sang songs of my glory ere the battle was yet done.");
-        stringList.add("Forsooth! Mine scouts didst find the enemy’s sheep… and feasted.");
-        stringList.add("My trebuchets sang a mighty song of stone and ruin!");
-        stringList.add("Zounds! Even the deer knelt before mine banner!");
-        stringList.add("Mine peasants rejoiced, for they shall toil no more beneath enemy yoke.");
-        stringList.add("The gods themselves smiled upon my Town Center this day.");
-        stringList.add("Aye! No boar, wolf, nor knight could stay my victory!");
-        stringList.add("Thy walls were strong, but my rams wert stronger still!");
-        stringList.add("I hath claimed every relic, and the monks did cheer my name!");
-        stringList.add("My men-at-arms grew tired… of winning!");
-        stringList.add("By might and right, I hath brought ruin to mine enemies!");
-        stringList.add("The last enemy villager begged to join my kingdom—nay, I made him jester!");
-        stringList.add("The sea itself yielded fish enough to feed an army—and so it did!");
-        stringList.add("Even the blacksmith wept, for no blade could best mine own!");
-        stringList.add("Not a single villager idled; their work wrought a kingdom unmatched.");
-        stringList.add("The heralds blew their trumpets so loud, the enemy castles crumbled!");
-        stringList.add("Alas for thee; rejoice for me! Victory is mine!");
+        stringList.add("WIN! Victory is mine! Sound the trumpets!");
+        stringList.add("WIN! By sword and wit, I hath prevailed!");
+        stringList.add("WIN! The foes did flee before my banner!");
+        stringList.add("WIN! Lo! I stand triumphant this day!");
+        stringList.add("WIN! All hail! The battle is won!");
 
         return stringList.get(rand.nextInt(stringList.size()));
 
@@ -470,29 +473,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         Random rand = new Random();
         List<String> stringList= new ArrayList<>();
 
-        stringList.add("'Odsblood! I accidentally resigned by mistake.");
-        stringList.add("My townsfolk began too close to mine kingdom's Town Center.");
-        stringList.add("Far too many birds flew over mine kingdom.");
-        stringList.add("A mere a single scout was present to serve in the beginning.");
-        stringList.add("My sheep perished when my folk sought to use it as food.");
-        stringList.add("Forsooth, I couldst not tame any wolves.");
-        stringList.add("All my beginning citizenry were male.");
-        stringList.add("Thy heraldic color was superior to mine own.");
-        stringList.add("My ignorant folk couldst not replant the berries!");
-        stringList.add("Thou art human, with soul and wit. I am naught but clockwork!");
-        stringList.add("My throne was most uncomfortable.");
-        stringList.add("Forsooth, the nearby boars grunted too loudly and frequently.");
-        stringList.add("'Zounds! I couldst not build a Wonder in the Dark Age!");
-        stringList.add("I couldst not comprehend mine folks' speech!");
-        stringList.add("My peasants wert puling wretches (a puny 25 hit points)!");
-        stringList.add("The shore fish near mine villager appeared all too sleepy.");
-        stringList.add("A graceless hillock rose too near my Town Center.");
-        stringList.add("My peasants' huts all faced different directions!");
-        stringList.add("The deer fled when mine hunters sought to slay them.");
-        stringList.add("When I commanded a peasant to hunt fierce boar, it slew him.");
-        stringList.add("My peasants foolishly walk on foot instead of astride ponies.");
-        stringList.add("Alas, I could find naught but fools gold.");
-        stringList.add("No wonder thou wert victorious! I shalt abdicate.");
+        stringList.add("LOSE! Alas! My kingdom lies in ruin.");
+        stringList.add("LOSE! I am defeated; fate was unkind.");
+        stringList.add("LOSE! Woe! Mine armies hath fallen.");
+        stringList.add("LOSE! My banner is trampled in the dust.");
+        stringList.add("LOSE! Zounds! I hath lost this day.");
 
         return stringList.get(rand.nextInt(stringList.size()));
 
@@ -502,16 +487,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         Random rand = new Random();
         List<String> stringList= new ArrayList<>();
 
-        stringList.add("We fought bravely… and yet, no victor claimeth the field.");
-        stringList.add("Twas a battle most even—neither crown nor grave awarded.");
-        stringList.add("The armies didst clash, but the earth herself called for peace.");
-        stringList.add("Mine sword hath dulled, thine shield hath cracked… and yet, we both yet stand.");
-        stringList.add("Alas! The battle hath ended, but no banner flyeth higher.");
-        stringList.add("Neither famine nor feast; neither triumph nor defeat. A curious end, indeed.");
-        stringList.add("Our scribes declare: the chronicles shall record naught but stalemate.");
-        stringList.add("The battlefield lies silent, strewn with valor but lacking victory.");
-        stringList.add("The heavens decreed no winner this day; only weary soldiers remain.");
-        stringList.add("Though we fought with might, fate hath balanced the scales between us.");
+        stringList.add("DRAW! The battle ends, yet no victor stands.");
+        stringList.add("DRAW! No crown, no grave; a stalemate remains.");
+        stringList.add("DRAW! Neither side claimeth the field today.");
+        stringList.add("DRAW! Peace holds sway o'er this weary land.");
+        stringList.add("DRAW! A draw! The bards will puzzle at this.");
 
         return stringList.get(rand.nextInt(stringList.size()));
 

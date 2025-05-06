@@ -52,5 +52,7 @@ public class HostServerActivity extends AppCompatActivity {
         TextView textview1= findViewById(R.id.HostServer_IPAddress_TextView);
         textview1.setText(getLocalIpAddress());
 
+
+
     }
 }
