@@ -1,5 +1,7 @@
 package com.example.appliakcija3;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.appliakcija3.SocketsPackage.SocketHandling;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -48,11 +52,41 @@ public class HostServerActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_hostserver);
 
-
+        connectionBegan=false;
         TextView textview1= findViewById(R.id.HostServer_IPAddress_TextView);
         textview1.setText(getLocalIpAddress());
+        try {
+            SocketHandling.startHost();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        WaitForConnectUIUpdateThread();
 
 
 
+    }
+
+    public static boolean connectionBegan;
+    public void WaitForConnectUIUpdateThread(){
+
+        new Thread(() -> {
+
+            while(!connectionBegan) {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            Intent intent = new Intent(HostServerActivity.this, GameActivity.class);
+            intent.putExtra("vsPlayer", false);
+            intent.putExtra("yourTurn", false);
+            runOnUiThread(() ->{
+                intent.putExtra("vsPlayer", true);
+                intent.putExtra("yourTurn", false);
+                startActivity(intent);
+
+            });
+        }).start();
     }
 }

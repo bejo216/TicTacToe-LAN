@@ -4,17 +4,14 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-05-01T12:17:19.634784800Z">
+        <DropdownSelection timestamp="2025-05-08T14:04:39.798463400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=R5CT83FPWNE" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\bejo\.android\avd\Small_Phone.avd" />
             </handle>
           </Target>
         </DropdownSelection>
         <DialogSelection />
-      </SelectionState>
-      <SelectionState runConfigName="All Tests">
-        <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
   </component>

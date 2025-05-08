@@ -129,12 +129,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             try {
                 ComputerMove();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                //throw new RuntimeException(e);
             }
 
 
         }
         if(!yourTurn && vsPlayer){
+            SocketHandling.WaitMove();
             OpponentMoveUpdateThread();
         }
 
@@ -156,7 +157,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             GameWon('W');
             if (vsPlayer){
                 SocketHandling.SendString("W");
-                SocketHandling.clientSocket.close();
+                SocketHandling.closeConnection();
             }
             running=false;
             finish();
@@ -168,7 +169,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             GameWon('D');
             if (vsPlayer){
                 SocketHandling.SendString("D");
-                SocketHandling.clientSocket.close();
+                SocketHandling.closeConnection();
 
 
 
@@ -364,7 +365,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    //throw new RuntimeException(e);
                 }
 
                 if(!opponentMove.equals("")){
@@ -374,16 +375,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             try {
                                 GameWon('L');
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                Log.d("GameWonL", "Crashed");
+                                //throw new RuntimeException(e);
                             }
 
                             //DODAJ I D AKO SE DOBIJE - mozda
                         });
-                        try {
-                            SocketHandling.clientSocket.close();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+
+                        SocketHandling.closeConnection();
                         finish();
                         return;
                     }
@@ -394,16 +393,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             try {
                                 GameWon('D');
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                //throw new RuntimeException(e);
                             }
 
                             //DODAJ I D AKO SE DOBIJE - mozda
                         });
-                        try {
-                            SocketHandling.clientSocket.close();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                        SocketHandling.closeConnection();
                         finish();
                         return;
                     }
